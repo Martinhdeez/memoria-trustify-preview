@@ -459,37 +459,33 @@ IGenericDao<E, PK> / GenericDaoEntityFramework<E, PK> (ModelUtil). -->
 title: Diseño del DAO de UserProfile
 ---
 classDiagram
-    namespace ModelUtil_Dao {
-        class IGenericDao~E,PK~ {
-            <<interface>>
-            +Create(entity : E) void
-            +Find(id : PK) E
-            +Exists(id : PK) bool
-            +Update(entity : E) void
-            +Remove(id : PK) void
-            +GetAllElements() List~E~
-            +Attach(entity : E) void
-        }
-        class GenericDaoEntityFramework~E,PK~ {
-            -Type entityClass
-            +DbContext Context [Inject]
-            +Create(entity : E) void
-            +Find(id : PK) E
-            +Exists(id : PK) bool
-            +Update(entity : E) void
-            +Remove(id : PK) void
-            +GetAllElements() List~E~
-            +Attach(entity : E) void
-        }
+    class IGenericDao {
+        <<interface>>
+        +Create(entity : E) void
+        +Find(id : PK) E
+        +Exists(id : PK) bool
+        +Update(entity : E) void
+        +Remove(id : PK) void
+        +GetAllElements() List~E~
+        +Attach(entity : E) void
     }
-    namespace Model_UserProfileDao {
-        class IUserProfileDao {
-            <<interface>>
-            +FindByLoginName(loginName : string) UserProfile
-        }
-        class UserProfileDaoEntityFramework {
-            +FindByLoginName(loginName : string) UserProfile
-        }
+    class GenericDaoEntityFramework {
+        -Type entityClass
+        +DbContext Context [Inject]
+        +Create(entity : E) void
+        +Find(id : PK) E
+        +Exists(id : PK) bool
+        +Update(entity : E) void
+        +Remove(id : PK) void
+        +GetAllElements() List~E~
+        +Attach(entity : E) void
+    }
+    class IUserProfileDao {
+        <<interface>>
+        +FindByLoginName(loginName : string) UserProfile
+    }
+    class UserProfileDaoEntityFramework {
+        +FindByLoginName(loginName : string) UserProfile
     }
     class DbContext
     class UserProfile {
@@ -503,6 +499,10 @@ classDiagram
     GenericDaoEntityFramework --> DbContext : Context
     UserProfileDaoEntityFramework ..> UserProfile
     UserProfileDaoEntityFramework ..> InstanceNotFoundException : throws
+
+    note for IGenericDao "Genérica en E (entidad) y PK (tipo de la clave)<br>Paquete ModelUtil.Dao"
+    note for GenericDaoEntityFramework "Genérica en E y PK<br>Paquete ModelUtil.Dao"
+    note for UserProfileDaoEntityFramework "Paquete Model.UserProfileDao"
 ```
 
 Todos los DAOs siguen el mismo esquema, basado en el DAO genérico de ModelUtil:
