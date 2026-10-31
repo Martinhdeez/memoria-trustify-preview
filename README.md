@@ -231,6 +231,8 @@ classDiagram
     ICategoryService ..> InstanceNotFoundException : throws
 ```
 
+Solo consulta, porque las categorías se insertan por script. Sirve para el desplegable de búsqueda por categoría.
+
 #### IProductService (B)
 
 `[Diagrama – IProductService]`
@@ -608,6 +610,8 @@ y lo necesario para ejecutarla. -->
 - **Nube y consulta** (`ITagService`): `FindAllTags` y `FindTagsByProduct` devuelven el número de comentarios de cada etiqueta, y `FindCommentsByTag` sirve para el enlace de cada etiqueta.
 - **Duplicados:** los nombres se normalizan (sin espacios y en minúsculas), así "Ganga" y "ganga" son la misma etiqueta.
 
+No requiere configuración extra: las tablas se crean con el script general.
+
 ### 4.2 Cacheado de búsquedas (B)
 
 `ProductService` guarda en un `MemoryCache` las **5 últimas búsquedas**:
@@ -617,7 +621,7 @@ y lo necesario para ejecutarla. -->
 - **Acierto:** si la búsqueda está en caché, se devuelve sin consultar la BD.
 - **Concurrencia:** la caché es `static` y se protege con `lock`.
 
-Como permite el enunciado, la caché no se invalida si cambian los productos.
+Como permite el enunciado, la caché no se invalida si cambian los productos. No requiere configuración extra, porque `System.Runtime.Caching` viene con .NET Framework.
 
 ### 4.3 OAuth 2.0 (A)
 
