@@ -5,7 +5,7 @@
 | Miembro | Login UDC | Parte |
 |---|---|---|
 | Martín Hernández González | m.hernadezg@udc.es | Usuarios (registro, autenticación, perfil) + OAuth |
-| Nicolás Figueroa Lago | [login] | Productos, categorías y valoraciones + caché de búsquedas |
+| Nicolás Figueroa Lago | n.flago@udc.es | Productos, categorías y valoraciones + caché de búsquedas |
 | Maicol Lois Lugo | [login] | Comentarios y denuncias + etiquetado |
 
 <!--
