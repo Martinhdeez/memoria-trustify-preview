@@ -29,20 +29,49 @@ Arquitectura en capas: la web solo usa las interfaces de los servicios y los ser
 
 ```
 MAD-Template.sln
-├── Lib/ModelUtil.dll    DAO genérico, excepciones, [Transactional] (de la asignatura)
-├── Model                capa modelo
-│   ├── *.edmx / *.tt    entidades (EF6 Database First) y DbContext
-│   ├── XxxDao           IXxxDao + XxxDaoEntityFramework (uno por entidad)
-│   ├── XxxService       IXxxService + XxxService + DTOs
-│   │   ├── Exceptions   excepciones del servicio
-│   │   └── Util         PasswordEncrypter, TagNames
-│   └── SQL              scripts de creación de la BD
-├── Test                 pruebas de integración (MSTest) y TestManager (Ninject)
-└── Web                  capa web (WebForms, iteración 2)
+├── Lib
+│   └── ModelUtil.dll                DAO genérico, excepciones, [Transactional] (de la asignatura)
+├── Model                            capa modelo
+│   ├── Trustify.Model.edmx          modelo EF6 (Database First)
+│   ├── Trustify.Model.tt            plantilla T4 de las entidades
+│   ├── Trustify.Model.Context.tt    plantilla T4 del DbContext (TrustifyEntities)
+│   ├── UserProfile.cs, OAuthAccount.cs, Category.cs, Product.cs,
+│   │   Rating.cs, Comment.cs, CommentReport.cs, Tag.cs        entidades
+│   ├── UserProfileDao               IUserProfileDao, UserProfileDaoEntityFramework
+│   ├── OAuthAccountDao              IOAuthAccountDao, OAuthAccountDaoEntityFramework
+│   ├── CategoryDao                  ICategoryDao, CategoryDaoEntityFramework
+│   ├── ProductDao                   IProductDao, ProductDaoEntityFramework
+│   ├── RatingDao                    IRatingDao, RatingDaoEntityFramework
+│   ├── CommentDao                   ICommentDao, CommentDaoEntityFramework
+│   ├── CommentReportDao             ICommentReportDao, CommentReportDaoEntityFramework
+│   ├── TagDao                       ITagDao, TagDaoEntityFramework
+│   ├── UserService                  IUserService, UserService, UserProfileDetails, LoginResult
+│   │   ├── Exceptions               IncorrectPasswordException
+│   │   └── Util                     PasswordEncrypter
+│   ├── CategoryService              ICategoryService, CategoryService
+│   ├── ProductService               IProductService, ProductService (con caché)
+│   ├── RatingService                IRatingService, RatingService
+│   │   └── Exceptions               SelfRatingException
+│   ├── CommentService               ICommentService, CommentService, CommentDetails
+│   │   └── Exceptions               CommentPermissionException, CommentUnderReviewException
+│   ├── TagService                   ITagService, TagService, TagDetails
+│   │   └── Util                     TagNames
+│   └── SQL                          SqlServerCreateDatabase.sql, SqlServerCreateTables.sql
+├── Test                             pruebas de integración (MSTest)
+│   ├── TestManager.cs               kernel de Ninject para las pruebas
+│   ├── UserProfileDao, CategoryDao, ProductDao, RatingDao                  tests de DAOs
+│   ├── UserService, CategoryService, ProductService, RatingService,
+│   │   CommentService, TagService                                          tests de servicios
+│   └── Scripts                      SqlServerCreateTables.Test.sql (BD Trustify_test)
+└── Web                              capa web (ASP.NET WebForms)
+    ├── Global.asax, Web.config
+    ├── Css                          styles.css
     └── HTTP
-        ├── Session      SessionManager, UserSession
-        ├── Util/IoC     IoCManagerNinject (bindings)
-        └── View         objetos de la vista (idiomas, países)
+        ├── Session                  SessionManager, UserSession, SpecificCulturePage
+        ├── Util                     CookiesManager
+        │   └── IoC                  IoCManagerNinject
+        └── View
+            └── ApplicationObjects   Countries, Languages, Locale
 ```
 
 ---
