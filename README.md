@@ -527,50 +527,38 @@ title: Caso de uso Login (capa modelo)
 sequenceDiagram
     autonumber
     actor Cliente
-    participant Proxy as proxy IUserService [Transactional]
-    participant Service as userService UserService
-    participant Dao as userProfileDao UserProfileDaoEntityFramework
+    participant Proxy as proxy [Transactional]
+    participant Service as UserService
+    participant Dao as UserProfileDao
     participant Enc as PasswordEncrypter
-    participant Ctx as context DbContext
-    participant BD as BD Trustify
 
-    Cliente->>+Proxy: Login(loginName, password, passwordIsEncrypted)
-    Proxy->>Proxy: new TransactionScope()
-    Proxy->>+Service: Login(loginName, password, passwordIsEncrypted)
-    Service->>+Dao: FindByLoginName(loginName)
-    Dao->>+Ctx: Set UserProfile .Where(loginName).FirstOrDefault()
-    Ctx->>BD: SELECT ... FROM UserProfile WHERE loginName = @p
-    BD-->>Ctx: fila o vacío
-    Ctx-->>-Dao: userProfile o null
+    Cliente->>Proxy: Login(loginName, password, false)
+    Proxy->>Proxy: abre transacción
+    Proxy->>Service: Login(loginName, password, false)
+    Service->>Dao: FindByLoginName(loginName)
 
     alt no existe el usuario
         Dao-->>Service: throws InstanceNotFoundException
         Service-->>Proxy: throws InstanceNotFoundException
-        Proxy->>Proxy: Dispose() sin Complete() = rollback
+        Proxy->>Proxy: rollback
         Proxy-->>Cliente: throws InstanceNotFoundException
-    else existe el usuario
-        Dao-->>-Service: userProfile
-        alt passwordIsEncrypted
-            Service->>Service: password == userProfile.enPassword
-        else contraseña en claro
-            Service->>+Enc: IsClearPasswordCorrect(password, userProfile.enPassword)
-            Enc->>Enc: Crypt(password) con SHA-256 + Base64
-            Enc-->>-Service: correcta o incorrecta
-        end
+    else existe
+        Dao-->>Service: userProfile
+        Service->>Enc: IsClearPasswordCorrect(password, enPassword)
+        Enc-->>Service: correcta o incorrecta
         alt contraseña incorrecta
             Service-->>Proxy: throws IncorrectPasswordException
-            Proxy->>Proxy: Dispose() sin Complete() = rollback
+            Proxy->>Proxy: rollback
             Proxy-->>Cliente: throws IncorrectPasswordException
         else contraseña correcta
-            Service->>Service: new LoginResult(usrId, firstName, enPassword, language, country)
-            Service-->>-Proxy: loginResult
-            Proxy->>Proxy: Complete() y Dispose()
-            Proxy-->>-Cliente: loginResult
+            Service-->>Proxy: loginResult
+            Proxy->>Proxy: commit
+            Proxy-->>Cliente: loginResult
         end
     end
 ```
 
-El proxy de Ninject abre la transacción y delega en el servicio, que busca el usuario a través del DAO. Si no existe, salta `InstanceNotFoundException`; si la contraseña no coincide, `IncorrectPasswordException`. En los dos casos se hace rollback. Si todo va bien, se confirma la transacción y se devuelve el `LoginResult`.
+El proxy de Ninject envuelve la llamada en una transacción y el servicio busca el usuario a través del DAO. Si no existe, salta `InstanceNotFoundException`; si la contraseña no coincide, `IncorrectPasswordException`. En los dos casos se hace rollback; si todo va bien, commit y se devuelve el `LoginResult`.
 
 ### 2.5 Otros aspectos
 
