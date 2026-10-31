@@ -6,7 +6,7 @@
 |---|---|---|
 | Martín Hernández González | m.hernadezg@udc.es | Usuarios (registro, autenticación, perfil) + OAuth |
 | Nicolás Figueroa Lago | n.flago@udc.es | Productos, categorías y valoraciones + caché de búsquedas |
-| Maicol Lois Lugo | m.lois.lugo@uc.es | Comentarios y denuncias + etiquetado |
+| Maicol Lois Lugo | m.lois.lugo@udc.es | Comentarios y denuncias + etiquetado |
 
 <!--
 NOTAS PARA NOSOTROS (borrar antes de imprimir)
