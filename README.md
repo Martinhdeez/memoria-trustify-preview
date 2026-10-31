@@ -178,33 +178,6 @@ Hemos agrupado los casos de uso según la entidad principal sobre la que actúan
 
 En todos los servicios, las operaciones que devuelven listas paginadas reciben `startIndex` y `pageSize` y tienen una operación `CountXxx` asociada para que la capa web pueda calcular las páginas. Las excepciones genéricas `InstanceNotFoundException` y `DuplicateInstanceException` proceden de ModelUtil; las excepciones específicas de cada servicio están en su subpaquete `Exceptions`. Las operaciones devuelven entidades cuando no hace falta información adicional y DTOs (`XxxDetails`, `LoginResult`) cuando hay que combinar datos de varias entidades o no queremos exponer la entidad completa.
 
-Excepciones comunes (ModelUtil), referenciadas en los diagramas siguientes:
-
-```mermaid
----
-title: Excepciones de ModelUtil
----
-classDiagram
-    class Exception
-    class ModelException
-    class InstanceException {
-        +object Key
-        +string ClassName
-        +InstanceException(message : string, key : object, className : string)
-    }
-    class InstanceNotFoundException {
-        +InstanceNotFoundException(key : object, className : string)
-    }
-    class DuplicateInstanceException {
-        +DuplicateInstanceException(key : object, className : string)
-    }
-
-    Exception <|-- ModelException
-    ModelException <|-- InstanceException
-    InstanceException <|-- InstanceNotFoundException
-    InstanceException <|-- DuplicateInstanceException
-```
-
 #### IUserService (A)
 
 `[Diagrama – IUserService + UserProfileDetails, LoginResult, IncorrectPasswordException]`
