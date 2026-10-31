@@ -531,11 +531,17 @@ sequenceDiagram
     participant Service as UserService
     participant Dao as UserProfileDao
     participant Enc as PasswordEncrypter
+    participant Ctx as DbContext
+    participant BD as BD Trustify
 
     Cliente->>Proxy: Login(loginName, password, false)
     Proxy->>Proxy: abre transacción
     Proxy->>Service: Login(loginName, password, false)
     Service->>Dao: FindByLoginName(loginName)
+    Dao->>Ctx: consulta LINQ por loginName
+    Ctx->>BD: SELECT ... FROM UserProfile
+    BD-->>Ctx: fila o vacío
+    Ctx-->>Dao: userProfile o null
 
     alt no existe el usuario
         Dao-->>Service: throws InstanceNotFoundException
